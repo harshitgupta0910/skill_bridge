@@ -12,15 +12,18 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// MongoDB Connection
-mongoose.connect("mongodb://localhost:27017/skillbridge");
+// ✅ MongoDB Atlas Connection (SkillBridge DB)
+mongoose.connect(
+  "mongodb+srv://skillbridge:8sQcEMp1nSSvuCVk@cluster0.vrfgcya.mongodb.net/skillbridge?retryWrites=true&w=majority"
+)
+.then(() => console.log("✅ Connected to MongoDB Atlas"))
+.catch((err) => console.error("❌ MongoDB connection failed:", err));
 
-// Models
+// ✅ Models
 const User = mongoose.model(
   "User",
   new mongoose.Schema({
@@ -47,7 +50,13 @@ const Message = mongoose.model(
   })
 );
 
-// File Upload Setup
+const UserHistory = mongoose.model('UserHistory', new mongoose.Schema({
+  userId: String,
+  previousData: Object,
+  changedAt: { type: Date, default: Date.now },
+}));
+
+// ✅ File Upload
 const storage = multer.diskStorage({
   destination: "uploads/",
   filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`),
@@ -66,7 +75,7 @@ const verifyToken = (req, res, next) => {
   });
 };
 
-// Helper
+// ✅ Helper
 const safeJSONParse = (val) => {
   try {
     return JSON.parse(val);
@@ -159,22 +168,32 @@ app.get("/api/community/members", async (req, res) => {
   }
 });
 
-// Update Profile
+// Update Profile (with History Save)
 app.put("/api/user/profile", verifyToken, async (req, res) => {
-  const updatedUser = await User.findByIdAndUpdate(
-    req.userId,
-    {
-      name: req.body.name,
-      bio: req.body.bio,
-      location: req.body.location,
-      availability: req.body.availability,
-      languages: req.body.languages,
-      skills: req.body.skills,
-      wantToLearn: req.body.wantToLearn,
-    },
-    { new: true }
-  );
-  res.json(updatedUser);
+  try {
+    const user = await User.findById(req.userId);
+    if (user) {
+      await UserHistory.create({ userId: user._id, previousData: user.toObject() });
+      const updatedUser = await User.findByIdAndUpdate(
+        req.userId,
+        {
+          name: req.body.name,
+          bio: req.body.bio,
+          location: req.body.location,
+          availability: req.body.availability,
+          languages: req.body.languages,
+          skills: req.body.skills,
+          wantToLearn: req.body.wantToLearn,
+        },
+        { new: true }
+      );
+      res.json(updatedUser);
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 // Upload Avatar
@@ -205,9 +224,6 @@ app.post("/api/messages", verifyToken, async (req, res) => {
       text,
       timestamp: newMsg.timestamp,
     });
-    console.log(`📨 Message sent to ${receiverId}`);
-  } else {
-    console.log(`⚠️ User ${receiverId} is offline`);
   }
 });
 
@@ -231,7 +247,6 @@ io.on("connection", (socket) => {
 
   socket.on("register", (userId) => {
     userSockets[userId] = socket.id;
-    console.log(`✅ Registered socket for user ${userId} → ${socket.id}`);
   });
 
   socket.on("send_message", ({ senderId, receiverId, message }) => {
@@ -242,18 +257,14 @@ io.on("connection", (socket) => {
         text: message,
         timestamp: new Date(),
       });
-      console.log(`📤 Real-time message from ${senderId} → ${receiverId}`);
-    } else {
-      console.log(`❌ Receiver ${receiverId} not connected`);
     }
   });
 
   socket.on("disconnect", () => {
     const disconnectedUser = Object.keys(userSockets).find((id) => userSockets[id] === socket.id);
     if (disconnectedUser) delete userSockets[disconnectedUser];
-    console.log("🔴 User disconnected:", socket.id);
   });
 });
 
-// Start Server
+// ✅ Start Server
 server.listen(5000, () => console.log("✅ Server running on http://localhost:5000"));

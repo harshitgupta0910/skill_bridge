@@ -33,6 +33,9 @@ const AuthPage: React.FC = () => {
     if (!res.data || !res.data.user) throw new Error('Invalid user data from API.');
 
     localStorage.setItem('token', res.data.token);
+    localStorage.setItem('userId', res.data.user._id); // harshit ka hagga hua saaf kiya hai
+    
+
     setUser({
       id: res.data.user._id,
       name: res.data.user.name,
@@ -65,7 +68,7 @@ const AuthPage: React.FC = () => {
       }
     });
 
-    // ✅ Convert comma-separated fields to JSON arrays
+    // Convert comma-separated fields to JSON arrays
     formData.set(
       'proficientSkills',
       JSON.stringify(

@@ -1,6 +1,6 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LandingPage from './pages/LandingPage';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';// used for react routes 
+import LandingPage from './pages/LandingPage'; // landing page 
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Exchanges from './pages/Exchanges';

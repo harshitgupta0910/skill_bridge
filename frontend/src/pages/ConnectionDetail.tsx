@@ -44,24 +44,74 @@ const ConnectionDetail = () => {
       });
   }, [id]);
 
-  useEffect(() => {
-    socket.on('receiveMessage', (msg) => {
-      setMessages((prev) => [...prev, msg]);
-    });
+//  Register socket with sender ID
+useEffect(() => {
+  const senderId = localStorage.getItem('userId');
+  if (senderId) {
+    socket.emit('register', senderId);
+    console.log(' Registered sender socket:', senderId);
+  }
+}, []);
 
-    return () => {
-      socket.off('receiveMessage');
-    };
-  }, []);
-
-  const sendMessage = () => {
-    if (newMessage.trim()) {
-      const msg = { sender: 'You', text: newMessage };
-      socket.emit('sendMessage', msg);
-      setMessages((prev) => [...prev, msg]);
-      setNewMessage('');
-    }
+//  Listen for incoming messages
+useEffect(() => {
+  const handleReceiveMessage = (msg: { senderId: string; text: string; timestamp: string }) => {
+    console.log('📥 Received message:', msg);
+    const senderName = connection?.name || 'Friend';
+    setMessages((prev) => [...prev, { sender: senderName, text: msg.text }]);
   };
+
+  socket.on('receive_message', handleReceiveMessage);
+
+  return () => {
+    socket.off('receive_message', handleReceiveMessage);
+  };
+}, [connection]);
+
+// Send message to backend and update UI
+const sendMessage = () => {
+  const senderId = localStorage.getItem('userId'); // logged-in user ID
+  const receiverId = connection?._id; // get real ID from fetched profile
+
+
+
+
+// DBUG LOGIC
+console.log('Sender:', senderId);
+console.log('Receiver:', receiverId);
+console.log('Message:', newMessage);
+if (!newMessage.trim() || !senderId || !receiverId) {
+  console.warn('Cannot send: missing data');
+  return;
+}
+
+
+
+
+
+
+
+
+  if (!newMessage.trim() || !senderId || !receiverId) return;
+
+  const msg = { sender: 'You', text: newMessage };
+
+  
+
+
+  // Emit to backend
+  socket.emit('send_message', {
+    senderId,
+    receiverId,
+    message: newMessage,
+  });
+
+  // UI update
+  setMessages((prev) => [...prev, msg]);
+  setNewMessage('');
+};
+
+
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -209,6 +259,9 @@ const ConnectionDetail = () => {
                       placeholder="Type your message..."
                       className="flex-1 border border-gray-300 rounded-lg px-4 py-2 outline-none"
                     />
+
+
+                      {/* SEND MESSSAGE BUTTON  */}
                     <button
                       onClick={sendMessage}
                       className="bg-primary-600 hover:bg-primary-700 text-white rounded-lg px-4 py-2 flex items-center"

@@ -329,6 +329,7 @@ const Community = () => {
                                 {member.availability}
                               </span>
                             </div>
+                            {/* connect button  */}
                             <Link
                               to={`/connection/${member._id}`}
                               className="px-6 py-2 bg-primary-600 text-white rounded-full hover:bg-primary-700 transition-colors font-medium"

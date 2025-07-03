@@ -63,7 +63,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// ✅ JWT Middleware
+//  JWT Middleware
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.status(401).json({ message: "No token provided" });
@@ -84,7 +84,7 @@ const safeJSONParse = (val) => {
   }
 };
 
-// ✅ Routes
+// Routes
 
 // Register
 app.post("/api/auth/register", upload.single("avatar"), async (req, res) => {
@@ -243,10 +243,12 @@ app.get("/api/messages/:otherUserId", verifyToken, async (req, res) => {
 const userSockets = {};
 
 io.on("connection", (socket) => {
-  console.log("🟢 User connected:", socket.id);
+  console.log(" User connected:", socket.id);
 
   socket.on("register", (userId) => {
     userSockets[userId] = socket.id;
+
+    console.log(`Registered socket for user ${userId} → ${socket.id}`);
   });
 
   socket.on("send_message", ({ senderId, receiverId, message }) => {
@@ -257,12 +259,18 @@ io.on("connection", (socket) => {
         text: message,
         timestamp: new Date(),
       });
+
+      console.log(`📤 Real-time message from ${senderId} → ${receiverId}`);
+    } else {
+      console.log(` Receiver ${receiverId} not connected`);
     }
   });
 
   socket.on("disconnect", () => {
     const disconnectedUser = Object.keys(userSockets).find((id) => userSockets[id] === socket.id);
     if (disconnectedUser) delete userSockets[disconnectedUser];
+
+    console.log(" User disconnected:", socket.id);
   });
 });
 

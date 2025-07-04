@@ -31,6 +31,34 @@ const ConnectionDetail = () => {
   const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
   const [newMessage, setNewMessage] = useState('');
 
+
+
+  // Load persisted messages from the server
+useEffect(() => {
+  const fetchMessages = async () => {
+    const userId = localStorage.getItem('userId');
+    if (!userId || !id) return;
+
+    try {
+      const res = await axios.get(`http://localhost:5000/api/messages/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
+
+      // Set messages from DB with sender labels
+      const msgs = res.data.map((msg: any) => ({
+        sender: msg.senderId === userId ? 'You' : connection?.name || 'Friend',
+        text: msg.text,
+      }));
+      setMessages(msgs);
+    } catch (err) {
+      console.error("Failed to load messages", err);
+    }
+  };
+
+  fetchMessages();
+}, [id, connection]);
+
+
   useEffect(() => {
     axios
       .get(`http://localhost:5000/api/user/${id}`)
@@ -69,47 +97,37 @@ useEffect(() => {
 }, [connection]);
 
 // Send message to backend and update UI
-const sendMessage = () => {
-  const senderId = localStorage.getItem('userId'); // logged-in user ID
-  const receiverId = connection?._id; // get real ID from fetched profile
-
-
-
-
-// DBUG LOGIC
-console.log('Sender:', senderId);
-console.log('Receiver:', receiverId);
-console.log('Message:', newMessage);
-if (!newMessage.trim() || !senderId || !receiverId) {
-  console.warn('Cannot send: missing data');
-  return;
-}
-
-
-
-
-
-
-
+const sendMessage = async () => {
+  const senderId = localStorage.getItem('userId');
+  const receiverId = connection?._id;
 
   if (!newMessage.trim() || !senderId || !receiverId) return;
 
   const msg = { sender: 'You', text: newMessage };
 
-  
+  try {
+    // Call the backend API to store the message
+    await axios.post(
+      'http://localhost:5000/api/messages',
+      { receiverId, text: newMessage },
+      { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+    );
 
+    // Emit real-time update
+    socket.emit('send_message', {
+      senderId,
+      receiverId,
+      message: newMessage,
+    });
 
-  // Emit to backend
-  socket.emit('send_message', {
-    senderId,
-    receiverId,
-    message: newMessage,
-  });
-
-  // UI update
-  setMessages((prev) => [...prev, msg]);
-  setNewMessage('');
+    // UI update
+    setMessages((prev) => [...prev, msg]);
+    setNewMessage('');
+  } catch (err) {
+    console.error('Failed to send & save message:', err);
+  }
 };
+
 
 
 

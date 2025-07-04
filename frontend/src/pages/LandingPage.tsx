@@ -22,20 +22,21 @@ const LandingPage = () => {
       <nav className="px-6 py-4 bg-white/80 backdrop-blur-md border-b border-gray-200/50 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-accent-500 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center">
               <Users className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
+             <Link 
+              to="/" className="text-2xl font-bold bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent">
               Skill Bridge
-            </span>
+            </Link>
           </div>
           <div className="hidden md:flex items-center space-x-8">
             <a href="#features" className="text-gray-600 hover:text-primary-600 transition-colors">Features</a>
             <a href="#how-it-works" className="text-gray-600 hover:text-primary-600 transition-colors">How it Works</a>
-            <a href="#community" className="text-gray-600 hover:text-primary-600 transition-colors">Community</a>
+            {/* <a href="#community" className="text-gray-600 hover:text-primary-600 transition-colors">Community</a> */}
             <Link 
               to="/auth" 
-              className="px-6 py-2 bg-gradient-to-r from-primary-500 to-accent-500 text-white rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-200"
+              className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-200"
             >
               Get Started
             </Link>
@@ -48,17 +49,17 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="animate-fade-in">
-              <h1 className="text-5xl lg:text-7xl font-bold text-gray-900 leading-tight mb-6">
+              <h1 className="text-5xl lg:text-7xl font-bold text-blue-600 leading-tight mb-6">
                 Exchange Skills,
-                <span className="bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent"> Build Communities</span>
+                <span className="bg-teal-600 bg-clip-text text-transparent"> Build Communities</span>
               </h1>
               <p className="text-xl text-gray-600 mb-8 leading-relaxed">
                 Connect with like-minded individuals and trade your expertise. Learn new skills without spending money - just share what you know.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link 
-                  to="/dashboard"
-                  className="group px-8 py-4 bg-gradient-to-r from-primary-500 to-accent-500 text-white rounded-2xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center"
+                  to="/auth"
+                  className="group px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-2xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center"
                 >
                   Start Exchanging
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -223,7 +224,7 @@ const LandingPage = () => {
             Join thousands of learners and teachers who are growing together through skill exchange.
           </p>
           <Link 
-            to="/dashboard"
+            to="/auth"
             className="inline-flex items-center px-8 py-4 bg-white text-primary-600 rounded-2xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-200"
           >
             Get Started for Free

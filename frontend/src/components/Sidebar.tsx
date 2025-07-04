@@ -26,6 +26,7 @@ const Sidebar = () => {
     { name: 'Community', href: '/community', icon: Users },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
     { name: 'Settings', href: '/settings', icon: Settings },
+    { name: 'Messages', href: '/messages', icon: MessageCircle },
   ];
 
   const handleLogout = () => {
@@ -80,21 +81,25 @@ const Sidebar = () => {
               <item.icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-gray-600'}`} />
               <span className="font-medium">{item.name}</span>
             </Link>
+            
           );
         })}
       </nav>
 
       {/* Quick Actions */}
       <div className="p-4 border-t border-gray-200 space-y-2">
-        <button className="w-full flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-xl transition-all duration-200 group">
-          <MessageCircle className="w-5 h-5 text-gray-400 group-hover:text-gray-600" />
-          <span className="font-medium">Messages</span>
-          <span className="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">3</span>
-        </button>
-        <button className="w-full flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-xl transition-all duration-200 group">
+        {/* ✅ Messages Button - Now using <Link> */}
+       
+
+        {/* ✅ Schedule Button - You can link it too
+        <Link
+          to="/schedule"
+          className="w-full flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-xl transition-all duration-200 group"
+        >
           <Calendar className="w-5 h-5 text-gray-400 group-hover:text-gray-600" />
           <span className="font-medium">Schedule</span>
-        </button>
+        </Link> */}
+
         <button
           onClick={handleLogout}
           className="w-full flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all duration-200 group"

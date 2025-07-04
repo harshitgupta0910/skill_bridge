@@ -125,7 +125,7 @@ const handleLogout = () => {
         {/* Header */}
         <div className="bg-white border-b border-gray-200 px-8 py-6">
           <div className="flex items-center justify-between">
-            <div className='item-center'>
+            <div>
               <h1 className="text-3xl font-bold text-gray-900">Welcome back, {user?.name}! 👋</h1>
               <p className="text-gray-600 mt-1">Here's what's happening with your skill exchanges today.</p>
             </div>
@@ -133,7 +133,10 @@ const handleLogout = () => {
   <button className="px-6 py-2 bg-gradient-to-r from-primary-500 to-accent-500 text-white rounded-full hover:shadow-lg transition-all duration-200">
     New Exchange
   </button>
-
+  <button className="p-2 text-gray-400 hover:text-gray-600 relative">
+    <MessageCircle className="w-6 h-6" />
+    {/* <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">3</span> */}
+  </button>
   {/* <button
     onClick={handleLogout}
     className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200"

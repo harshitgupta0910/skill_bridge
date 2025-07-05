@@ -16,47 +16,41 @@ app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// ✅ MongoDB Atlas Connection (SkillBridge DB)
+// ✅ MongoDB Connection
 mongoose.connect(
   "mongodb+srv://skillbridge:8sQcEMp1nSSvuCVk@cluster0.vrfgcya.mongodb.net/skillbridge?retryWrites=true&w=majority"
 )
-.then(() => console.log("✅ Connected to MongoDB Atlas"))
-.catch((err) => console.error("❌ MongoDB connection failed:", err));
+  .then(() => console.log("✅ Connected to MongoDB Atlas"))
+  .catch((err) => console.error("❌ MongoDB connection failed:", err));
 
 // ✅ Models
-const User = mongoose.model(
-  "User",
-  new mongoose.Schema({
-    name: String,
-    email: { type: String, unique: true },
-    password: String,
-    bio: String,
-    location: String,
-    availability: String,
-    languages: [String],
-    photo: String,
-    skills: [String],
-    wantToLearn: [String],
-  })
-);
+const User = mongoose.model("User", new mongoose.Schema({
+  name: String,
+  email: { type: String, unique: true },
+  password: String,
+  bio: String,
+  location: String,
+  availability: String,
+  languages: [String],
+  photo: String,
+  skills: [String],
+  wantToLearn: [String],
+}));
 
-const Message = mongoose.model(
-  "Message",
-  new mongoose.Schema({
-    senderId: String,
-    receiverId: String,
-    text: String,
-    timestamp: { type: Date, default: Date.now },
-  })
-);
+const Message = mongoose.model("Message", new mongoose.Schema({
+  senderId: String,
+  receiverId: String,
+  text: String,
+  timestamp: { type: Date, default: Date.now },
+}));
 
-const UserHistory = mongoose.model('UserHistory', new mongoose.Schema({
+const UserHistory = mongoose.model("UserHistory", new mongoose.Schema({
   userId: String,
   previousData: Object,
   changedAt: { type: Date, default: Date.now },
 }));
 
-// ✅ File Upload
+// ✅ File Upload Setup
 const storage = multer.diskStorage({
   destination: "uploads/",
   filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`),
@@ -168,7 +162,7 @@ app.get("/api/community/members", async (req, res) => {
   }
 });
 
-// Update Profile (with History Save)
+// Update Profile (with History)
 app.put("/api/user/profile", verifyToken, async (req, res) => {
   try {
     const user = await User.findById(req.userId);
@@ -206,7 +200,7 @@ app.post("/api/user/avatar", verifyToken, upload.single("avatar"), async (req, r
   res.json(updatedUser);
 });
 
-// Send Message
+// Send Message (Saves + Emits)
 app.post("/api/messages", verifyToken, async (req, res) => {
   const { receiverId, text } = req.body;
   const newMsg = new Message({
@@ -227,7 +221,7 @@ app.post("/api/messages", verifyToken, async (req, res) => {
   }
 });
 
-// Fetch Conversation
+// Fetch Messages
 app.get("/api/messages/:otherUserId", verifyToken, async (req, res) => {
   const otherUserId = req.params.otherUserId;
   const messages = await Message.find({
@@ -249,19 +243,10 @@ io.on("connection", (socket) => {
     userSockets[userId] = socket.id;
   });
 
-  socket.on("send_message", ({ senderId, receiverId, message }) => {
-    const receiverSocket = userSockets[receiverId];
-    if (receiverSocket) {
-      io.to(receiverSocket).emit("receive_message", {
-        senderId,
-        text: message,
-        timestamp: new Date(),
-      });
-    }
-  });
-
   socket.on("disconnect", () => {
-    const disconnectedUser = Object.keys(userSockets).find((id) => userSockets[id] === socket.id);
+    const disconnectedUser = Object.keys(userSockets).find(
+      (id) => userSockets[id] === socket.id
+    );
     if (disconnectedUser) delete userSockets[disconnectedUser];
   });
 });

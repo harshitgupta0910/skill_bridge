@@ -46,7 +46,7 @@ useEffect(() => {
 
       // Set messages from DB with sender labels
       const msgs = res.data.map((msg: any) => ({
-        sender: msg.senderId === userId ? 'You' : connection?.name || 'Friend',
+        sender: msg.senderId === userId ? 'You' : connection?.name,
         text: msg.text,
       }));
       setMessages(msgs);
@@ -85,7 +85,7 @@ useEffect(() => {
 useEffect(() => {
   const handleReceiveMessage = (msg: { senderId: string; text: string; timestamp: string }) => {
     console.log('📥 Received message:', msg);
-    const senderName = connection?.name || 'Friend';
+    const senderName = msg.senderId === localStorage.getItem('userId') ? 'You' : connection?.name;
     setMessages((prev) => [...prev, { sender: senderName, text: msg.text }]);
   };
 
@@ -94,7 +94,8 @@ useEffect(() => {
   return () => {
     socket.off('receive_message', handleReceiveMessage);
   };
-}, [connection]);
+}, []); // ✅ No dependency (run once)
+
 
 // Send message to backend and update UI
 const sendMessage = async () => {

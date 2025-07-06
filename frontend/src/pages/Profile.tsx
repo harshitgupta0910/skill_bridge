@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
+import imag from '../pages/image.png';
 import { useApp } from '../context/AppContext';
 import ReviewsSection from '../components/ReviewsSection';
 import {
@@ -95,7 +96,7 @@ const Profile: React.FC = () => {
           <div className="bg-white p-6 rounded-xl shadow-sm text-center">
             <div className="relative inline-block">
               <img
-                src={user.photo ? `http://localhost:5000${user.photo}` : '/default.jpg'}
+                src={user.photo ? `http://localhost:5000${user.photo}` : imag}
                 alt="avatar"
                 className="w-32 h-32 rounded-full object-cover mx-auto"
               />

@@ -17,7 +17,7 @@ const ReviewsSection: React.FC<{ userId: string }> = ({ userId }) => {
   const [reviews, setReviews] = useState<Review[]>([]);
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/reviews/${userId}`).then((res) => {
+    axios.get(`proxy/api/reviews/${userId}`).then((res) => {
       setReviews(res.data);
     }).catch((err) => {
       console.error(err);

@@ -202,7 +202,7 @@ useEffect(() => {
                   <div className="flex items-center space-x-2 text-sm text-gray-600">
                     <MapPin className="w-4 h-4" />
                     <span>{connection.location}</span>
-                    <span className={`w-3 h-3 rounded-full ${isOnline ? 'bg-green-500' : 'bg-gray-900'}`}></span>
+                    <span className={`w-3 h-3 rounded-full ${isOnline ? 'bg-green-500' : 'bg-gray-700'}`}></span>
                   </div>
                 </div>
               </div>
@@ -289,7 +289,7 @@ useEffect(() => {
                           <React.Fragment key={index}>
                             {showDate && (<div className="text-center text-xs text-gray-900 my-2">{date}</div>)}
                             <div className={`mb-2 ${isOwnMessage ? 'text-right' : 'text-left'}`}>
-                              <span className={`inline-block px-4 py-2 border rounded-lg shadow text-m ${isOwnMessage ? 'bg-teal-300 text-black' : 'bg-blue-300 text-black'}`}>
+                              <span className={`inline-block px-4 py-2 border rounded-lg shadow text-m ${isOwnMessage ? 'bg-teal-500 text-black' : 'bg-blue-400 text-black'}`}>
                                 {msg.text}
                                 <span className="ml-2 text-gray-50 text-xs">{time}</span>
                                 {isOwnMessage && (

@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 import axios from 'axios';
 import io from 'socket.io-client';
 
-const socket = io('proxy');
+const socket = io('http://localhost:5000');
 
 interface User {
   _id: string;
@@ -44,7 +44,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     try {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No token');
-      const res = await axios.get('proxy/api/user/profile', {
+      const res = await axios.get('http://localhost:5000/api/user/profile', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUser(res.data);

@@ -13,7 +13,7 @@ import {
   CheckCircle, XCircle, AlertCircle, Users, BookOpen, BarChart3, MoreVertical, Send
 } from 'lucide-react';
 import  imag  from './image.png'; // Adjust the import path as necessary
-const socket = io('proxy');
+const socket = io('http://localhost:5000');
 
 const ConnectionDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -33,7 +33,7 @@ const [activeTab, setActiveTab] = useState(defaultTab);
 
 
   useEffect(() => {
-    axios.get(`proxy/api/user/${id}`)
+    axios.get(`http://localhost:5000/api/user/${id}`)
       .then(res => {
         setConnection(res.data);
         setLoading(false);
@@ -64,7 +64,7 @@ const [activeTab, setActiveTab] = useState(defaultTab);
 
     const fetchMessages = async () => {
       try {
-        const res = await axios.get(`proxy/api/messages/${id}`, {
+        const res = await axios.get(`http://localhost:5000/api/messages/${id}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         const msgs = res.data.map((msg: any) => ({
@@ -141,7 +141,7 @@ useEffect(() => {
     const timestamp = new Date().toISOString();
 
     await axios.post(
-      'proxy/api/messages',
+      'http://localhost:5000/api/messages',
       { receiverId: connection._id, text: newMessage, timestamp, status: 'sent' },
       { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
     );
@@ -193,7 +193,7 @@ useEffect(() => {
               </Link>
               <div className="flex items-center space-x-4">
                 <img
-                  src={connection.photo ? `proxy${connection.photo}` : imag}
+                  src={connection.photo ? `http://localhost:5000${connection.photo}` : imag}
                   alt={connection.name}
                   className="w-12 h-12 rounded-full object-cover"
                 />
@@ -202,7 +202,7 @@ useEffect(() => {
                   <div className="flex items-center space-x-2 text-sm text-gray-600">
                     <MapPin className="w-4 h-4" />
                     <span>{connection.location}</span>
-                    <span className={`w-3 h-3 rounded-full ${isOnline ? 'bg-green-500' : 'bg-gray-900'}`}></span>
+                    <span className={`w-3 h-3 rounded-full ${isOnline ? 'bg-green-500' : 'bg-gray-700'}`}></span>
                   </div>
                 </div>
               </div>
@@ -289,7 +289,7 @@ useEffect(() => {
                           <React.Fragment key={index}>
                             {showDate && (<div className="text-center text-xs text-gray-900 my-2">{date}</div>)}
                             <div className={`mb-2 ${isOwnMessage ? 'text-right' : 'text-left'}`}>
-                              <span className={`inline-block px-4 py-2 border rounded-lg shadow text-m ${isOwnMessage ? 'bg-teal-300 text-black' : 'bg-blue-300 text-black'}`}>
+                              <span className={`inline-block px-4 py-2 border rounded-lg shadow text-m ${isOwnMessage ? 'bg-teal-500 text-black' : 'bg-blue-400 text-black'}`}>
                                 {msg.text}
                                 <span className="ml-2 text-gray-50 text-xs">{time}</span>
                                 {isOwnMessage && (

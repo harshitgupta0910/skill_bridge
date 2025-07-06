@@ -18,7 +18,7 @@ import { useApp } from '../context/AppContext';
 import SK from '../sk.png';
 import io from 'socket.io-client';
 
-const socket = io('proxy'); // Your backend Socket.IO server
+const socket = io('http://localhost:5000'); // Your backend Socket.IO server
 
 const Sidebar = () => {
   const location = useLocation();
@@ -78,7 +78,7 @@ const Sidebar = () => {
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center space-x-3">
           <img
-            src={user?.photo ? `proxy${user.photo}` : imag}
+            src={user?.photo ? `http://localhost:5000${user.photo}` : imag}
             alt={user?.name}
             className="w-12 h-12 rounded-full object-cover"
           />

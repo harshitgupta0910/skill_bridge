@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
@@ -8,22 +8,24 @@ const mongoose = require("mongoose");
 const path = require("path");
 const http = require("http");
 const { Server } = require("socket.io");
+const fs = require("fs");
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 
+// Middlewares
 app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// ✅ MongoDB Connection (from .env)
+// MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("✅ Connected to MongoDB"))
   .catch((err) => console.error("❌ MongoDB connection failed:", err));
 
-// ✅ Models
+// Models
 const User = mongoose.model(
   "User",
   new mongoose.Schema({
@@ -51,24 +53,14 @@ const Message = mongoose.model(
   })
 );
 
-if (process.env.NODE_ENV === "production") {
-  const frontendPath = path.join(__dirname, "../frontend/build");
-  app.use(express.static(frontendPath));
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(frontendPath, "index.html"));
-  });
-}
-
-
-// ✅ Multer for uploads
+// Multer
 const storage = multer.diskStorage({
   destination: "uploads/",
   filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`),
 });
 const upload = multer({ storage });
 
-// ✅ JWT Auth Middleware (from .env)
+// JWT Middleware
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.status(401).json({ message: "No token provided" });
@@ -80,34 +72,49 @@ const verifyToken = (req, res, next) => {
   });
 };
 
-// ✅ Routes
-// Auth
+// Auth Routes
 app.post("/api/auth/register", upload.single("avatar"), async (req, res) => {
   try {
-    const { name, email, password, bio, location, availability, languages } = req.body;
+    const {
+      name,
+      email,
+      password,
+      bio,
+      location,
+      availability,
+      languages,
+      skills,
+      wantToLearn,
+    } = req.body;
+
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    if (existingUser) return res.status(400).json({ message: "Email already in use" });
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({
       name,
-      email,
+      email: email.toLowerCase(),
       password: hashedPassword,
       bio,
       location,
       availability,
       languages: languages ? languages.split(",") : [],
       photo: req.file ? `/uploads/${req.file.filename}` : "",
-      skills: JSON.parse(req.body.skills || "[]"),
-      wantToLearn: JSON.parse(req.body.wantToLearn || "[]"),
+      skills: JSON.parse(skills || "[]"),
+      wantToLearn: JSON.parse(wantToLearn || "[]"),
     });
+
     await user.save();
     res.json({ message: "Registered successfully" });
   } catch (err) {
+    console.error("Register error:", err);
     res.status(500).json({ message: err.message });
   }
 });
 
 app.post("/api/auth/login", async (req, res) => {
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({ email: req.body.email.toLowerCase() });
     if (!user) return res.status(400).json({ message: "Invalid email" });
 
     const valid = await bcrypt.compare(req.body.password, user.password);
@@ -116,11 +123,12 @@ app.post("/api/auth/login", async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
     res.json({ token, user });
   } catch (err) {
+    console.error("Login error:", err);
     res.status(500).json({ message: err.message });
   }
 });
 
-// Users
+// User Routes
 app.get("/api/user/profile", verifyToken, async (req, res) => {
   try {
     const user = await User.findById(req.userId);
@@ -152,11 +160,7 @@ app.get("/api/community/members", async (req, res) => {
 
 app.put("/api/user/profile", verifyToken, async (req, res) => {
   try {
-    const updatedUser = await User.findByIdAndUpdate(
-      req.userId,
-      { ...req.body },
-      { new: true }
-    );
+    const updatedUser = await User.findByIdAndUpdate(req.userId, req.body, { new: true });
     if (!updatedUser) return res.status(404).json({ message: "User not found" });
     res.json(updatedUser);
   } catch (err) {
@@ -177,7 +181,7 @@ app.post("/api/user/avatar", verifyToken, upload.single("avatar"), async (req, r
   }
 });
 
-// Messages
+// Message Routes
 app.post("/api/messages", verifyToken, async (req, res) => {
   try {
     const { receiverId, text, timestamp } = req.body;
@@ -224,9 +228,7 @@ app.post("/api/messages/read", verifyToken, async (req, res) => {
     );
 
     const socketId = userSockets[receiverId];
-    if (socketId) {
-      io.to(socketId).emit("message_read", { messageIds });
-    }
+    if (socketId) io.to(socketId).emit("message_read", { messageIds });
 
     res.json({ message: "Messages marked as read" });
   } catch (err) {
@@ -234,7 +236,7 @@ app.post("/api/messages/read", verifyToken, async (req, res) => {
   }
 });
 
-// ✅ Socket.IO
+// Socket.IO Logic
 const userSockets = {};
 io.on("connection", (socket) => {
   console.log("🟢 Connected:", socket.id);
@@ -271,6 +273,17 @@ io.on("connection", (socket) => {
   });
 });
 
-// ✅ Start Server
+// Serve frontend in production
+if (process.env.NODE_ENV === "production") {
+  const frontendPath = path.join(__dirname, "../frontend/build");
+  app.use(express.static(frontendPath));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(frontendPath, "index.html"));
+  });
+}
+
+// Start server
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
+server.listen(PORT, () => {
+  console.log(`✅ Server running on http://localhost:${PORT}`);
+});

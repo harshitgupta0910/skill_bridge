@@ -9,7 +9,7 @@ const Messages = () => {
 
   useEffect(() => {
     axios
-      .get('proxy/api/community/members')
+      .get('http://localhost:5000/api/community/members')
       .then((res) => setUsers(res.data))
       .catch((err) => console.error(err));
   }, []);
@@ -50,7 +50,7 @@ const Messages = () => {
                   <img
                     src={
                       member.photo
-                        ? `proxy${member.photo}`
+                        ? `http://localhost:5000${member.photo}`
                         : '/default-avatar.png'
                     }
                     alt={member.name}

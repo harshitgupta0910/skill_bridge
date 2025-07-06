@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
+import  imag  from './image.png'; 
 import {
   Search,
   Filter,
@@ -139,7 +140,7 @@ const Community = () => {
                         <div key={member._id} className="border border-gray-200 rounded-2xl p-6 hover:shadow-md transition-all duration-200">
                           <div className="flex items-center space-x-4 mb-4">
                             <img
-                              src={member.photo ? `http://localhost:5000${member.photo}` : '/default-avatar.png'}
+                              src={member.photo ? `http://localhost:5000${member.photo}` : imag}
                               alt={member.name}
                               className="w-12 h-12 rounded-full object-cover"
                             />

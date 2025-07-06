@@ -86,7 +86,6 @@ app.post("/api/auth/register", upload.single("avatar"), async (req, res) => {
       skills,
       wantToLearn,
     } = req.body;
-
     const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) return res.status(400).json({ message: "Email already in use" });
 

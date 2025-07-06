@@ -279,7 +279,6 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(path.join(frontendPath,"frontend","dist", "index.html"));
   });
 }
-
 // Start server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {

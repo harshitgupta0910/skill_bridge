@@ -12,10 +12,20 @@ const fs = require("fs");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" } });
 
-// Middlewares
-app.use(cors());
+//  Use your frontend URL here:
+const FRONTEND_URL = "https://skill-bridge-frontend.onrender.com";
+
+const io = new Server(server, {
+  cors: {
+    origin: FRONTEND_URL,
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
+//  CORS Middleware with frontend URL
+app.use(cors({ origin: FRONTEND_URL, credentials: true }));
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
@@ -239,7 +249,7 @@ app.post("/api/messages/read", verifyToken, async (req, res) => {
 // Socket.IO Logic
 const userSockets = {};
 io.on("connection", (socket) => {
-  console.log("🟢 Connected:", socket.id);
+  console.log(" Connected:", socket.id);
 
   socket.on("register", (userId) => {
     userSockets[userId] = socket.id;
@@ -272,18 +282,12 @@ io.on("connection", (socket) => {
     }
   });
 });
-
-// Serve frontend in production
-// if (process.env.NODE_ENV === "production") {
-//   const frontendPath = path.join(__dirname, "../frontend/build");
-//   app.use(express.static(frontendPath));
-//   app.get("*", (req, res) => {
-//     res.sendFile(path.join(frontendPath, "index.html"));
-//   });
-// }
+app.get("/", (req, res) => {
+  res.send(" Skill Bridge backend is live and connected to frontend");
+});
 
 // Start server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
+  console.log(` Server running on http://localhost:${PORT}`);
 });

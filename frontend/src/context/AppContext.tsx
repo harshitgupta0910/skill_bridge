@@ -1,22 +1,15 @@
-// src/context/AppContext.tsx
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import axios from 'axios';
-import io from 'socket.io-client';
-
-const socket = io('https://skill-bridge-7de9.onrender.com');
+import React, { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
 
 interface User {
-  _id: string;
+  id: string;
   name: string;
   email: string;
-  bio: string;
-  location: string;
-  availability: string;
-  languages: string[];
-  photo: string;
+  avatar?: string;
   skills: string[];
   wantToLearn: string[];
   rating?: number;
+  location?: string;
 }
 
 interface AppContextType {
@@ -24,56 +17,55 @@ interface AppContextType {
   setUser: (user: User | null) => void;
   isLoggedIn: boolean;
   setIsLoggedIn: (val: boolean) => void;
-  fetchUserProfile: () => Promise<void>;
-  socket: ReturnType<typeof io> | null;
 }
 
-const AppContext = createContext<AppContextType | undefined>(undefined);
+const AppContext = createContext<AppContextType>({
+  user: null,
+  setUser: () => {},
+  isLoggedIn: false,
+  setIsLoggedIn: () => {},
+});
 
-export const useApp = () => {
-  const c = useContext(AppContext);
-  if (!c) throw new Error('useApp must be used inside AppProvider');
-  return c;
-};
-
-export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const fetchUserProfile = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error('No token');
-      const res = await axios.get('http://localhost:5000/api/user/profile', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setUser(res.data);
-      setIsLoggedIn(true);
-    } catch (err) {
-      console.error('Fetch profile error:', err);
-      setUser(null);
-      setIsLoggedIn(false);
-      localStorage.removeItem('token');
-    }
-  };
-
-  // Register the user with socket.io when profile is fetched
   useEffect(() => {
-    if (user && user._id) {
-      socket.emit('register', user._id);
+    const token = localStorage.getItem("token");
+    if (token && !user) {
+      axios
+        .get("https://skill-bridge-7de9.onrender.com/api/user/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => {
+          const userData = res.data;
+          setUser({
+            id: userData._id,
+            name: userData.name,
+            email: userData.email,
+            avatar: userData.photo
+              ? `https://skill-bridge-7de9.onrender.com${userData.photo}`
+              : "",
+            skills: userData.skills || [],
+            wantToLearn: userData.wantToLearn || [],
+            rating: 4.8,
+            location: userData.location || "",
+          });
+          setIsLoggedIn(true);
+        })
+        .catch((err) => {
+          console.error("Token invalid or expired", err);
+          localStorage.removeItem("token");
+          localStorage.removeItem("userId");
+        });
     }
   }, [user]);
 
-  // Auto fetch on login state change
-  useEffect(() => {
-    if (isLoggedIn) fetchUserProfile();
-  }, [isLoggedIn]);
-
   return (
-    <AppContext.Provider
-      value={{ user, setUser, isLoggedIn, setIsLoggedIn, fetchUserProfile, socket }}
-    >
+    <AppContext.Provider value={{ user, setUser, isLoggedIn, setIsLoggedIn }}>
       {children}
     </AppContext.Provider>
   );
 };
+
+export const useApp = () => useContext(AppContext);

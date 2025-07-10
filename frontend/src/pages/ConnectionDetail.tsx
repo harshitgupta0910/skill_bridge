@@ -13,7 +13,7 @@ import {
   CheckCircle, XCircle, AlertCircle, Users, BookOpen, BarChart3, MoreVertical, Send
 } from 'lucide-react';
 import  imag  from './image.png'; // Adjust the import path as necessary
-const socket = io('https://skill-bridge-7de9.onrender.com');
+const socket = io('http://localhost:5000');
 
 const ConnectionDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -33,7 +33,7 @@ const [activeTab, setActiveTab] = useState(defaultTab);
 
 
   useEffect(() => {
-    axios.get(`https://skill-bridge-7de9.onrender.com/api/user/${id}`)
+    axios.get(`http://localhost:5000/api/user/${id}`)
       .then(res => {
         setConnection(res.data);
         setLoading(false);
@@ -64,7 +64,7 @@ const [activeTab, setActiveTab] = useState(defaultTab);
 
     const fetchMessages = async () => {
       try {
-        const res = await axios.get(`https://skill-bridge-7de9.onrender.com/api/messages/${id}`, {
+        const res = await axios.get(`http://localhost:5000/api/messages/${id}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         const msgs = res.data.map((msg: any) => ({
@@ -141,7 +141,7 @@ useEffect(() => {
     const timestamp = new Date().toISOString();
 
     await axios.post(
-      'https://skill-bridge-7de9.onrender.com/api/messages',
+      'http://localhost:5000/api/messages',
       { receiverId: connection._id, text: newMessage, timestamp, status: 'sent' },
       { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
     );
@@ -193,7 +193,7 @@ useEffect(() => {
               </Link>
               <div className="flex items-center space-x-4">
                 <img
-                  src={connection.photo ? `https://skill-bridge-7de9.onrender.com${connection.photo}` : imag}
+                  src={connection.photo ? `http://localhost:5000${connection.photo}` : imag}
                   alt={connection.name}
                   className="w-12 h-12 rounded-full object-cover"
                 />

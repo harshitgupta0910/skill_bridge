@@ -18,7 +18,7 @@ import { useApp } from '../context/AppContext';
 import SK from '../sk.png';
 import io from 'socket.io-client';
 
-const socket = io('https://skill-bridge-7de9.onrender.com'); // Your backend Socket.IO server
+const socket = io('http://localhost:5000'); // Your backend Socket.IO server
 
 const Sidebar = () => {
   const location = useLocation();

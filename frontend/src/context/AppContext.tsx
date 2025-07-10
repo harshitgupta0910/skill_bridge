@@ -34,7 +34,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const token = localStorage.getItem("token");
     if (token && !user) {
       axios
-        .get("https://skill-bridge-7de9.onrender.com/api/user/profile", {
+        .get("http://localhost:5000/api/user/profile", {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {
@@ -44,7 +44,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
             name: userData.name,
             email: userData.email,
             avatar: userData.photo
-              ? `https://skill-bridge-7de9.onrender.com${userData.photo}`
+              ? `http://localhost:5000${userData.photo}`
               : "",
             skills: userData.skills || [],
             wantToLearn: userData.wantToLearn || [],

@@ -44,7 +44,7 @@ const Profile: React.FC = () => {
   const handleSave = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.put('http://localhost:5000/api/user/profile', editForm, {
+      const res = await axios.put('https://skill-bridge-7de9.onrender.com/api/user/profile', editForm, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUser(res.data);
@@ -60,7 +60,7 @@ const Profile: React.FC = () => {
     fd.append('avatar', file);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.post('http://localhost:5000/api/user/avatar', fd, {
+      const res = await axios.post('https://skill-bridge-7de9.onrender.com/api/user/avatar', fd, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
@@ -96,7 +96,7 @@ const Profile: React.FC = () => {
           <div className="bg-white p-6 rounded-xl shadow-sm text-center">
             <div className="relative inline-block">
               <img
-                src={user.photo ? `http://localhost:5000${user.photo}` : imag}
+                src={user.photo ? `https://skill-bridge-7de9.onrender.com${user.photo}` : imag}
                 alt="avatar"
                 className="w-32 h-32 rounded-full object-cover mx-auto"
               />

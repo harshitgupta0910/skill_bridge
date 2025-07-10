@@ -22,8 +22,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ Connected to MongoDB"))
-  .catch((err) => console.error("❌ MongoDB connection failed:", err));
+  .then(() => console.log(" Connected to MongoDB"))
+  .catch((err) => console.error(" MongoDB connection failed:", err));
 
 // Models
 const User = mongoose.model(
@@ -274,13 +274,13 @@ io.on("connection", (socket) => {
 });
 
 // Serve frontend in production
-if (process.env.NODE_ENV === "production") {
-  const frontendPath = path.join(__dirname, "../frontend/build");
-  app.use(express.static(frontendPath));
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(frontendPath, "index.html"));
-  });
-}
+// if (process.env.NODE_ENV === "production") {
+//   const frontendPath = path.join(__dirname, "../frontend/build");
+//   app.use(express.static(frontendPath));
+//   app.get("*", (req, res) => {
+//     res.sendFile(path.join(frontendPath, "index.html"));
+//   });
+// }
 
 // Start server
 const PORT = process.env.PORT || 5000;

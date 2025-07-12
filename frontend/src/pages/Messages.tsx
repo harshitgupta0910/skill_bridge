@@ -9,7 +9,9 @@ const Messages = () => {
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
   useEffect(() => {
     axios
+
       .get(`${backendUrl}/api/community/members`)
+
       .then((res) => setUsers(res.data))
       .catch((err) => console.error(err));
   }, []);
@@ -50,7 +52,9 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
                   <img
                     src={
                       member.photo
+
                         ? `${backendUrl}${member.photo}`
+
                         : '/default-avatar.png'
                     }
                     alt={member.name}

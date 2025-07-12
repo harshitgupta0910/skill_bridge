@@ -14,8 +14,10 @@ import {
 } from 'lucide-react';
 
 import  imag  from './image.png'; // Adjust the import path as necessary
+
 const backendUrl = import.meta.env.VITE_BACKEND;
-const socket = io('');
+const socket = io(`${backendUrl}`);
+
 
 const ConnectionDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -35,7 +37,9 @@ const [activeTab, setActiveTab] = useState(defaultTab);
 
 
   useEffect(() => {
+
     axios.get(`${backendUrl}/api/user/${id}`)
+
       .then(res => {
         setConnection(res.data);
         setLoading(false);
@@ -66,7 +70,9 @@ const [activeTab, setActiveTab] = useState(defaultTab);
 
     const fetchMessages = async () => {
       try {
+
         const res = await axios.get(`${backendUrl}/api/messages/${id}`, {
+
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         const msgs = res.data.map((msg: any) => ({
@@ -143,7 +149,9 @@ useEffect(() => {
     const timestamp = new Date().toISOString();
 
     await axios.post(
+
       `${backendUrl}/api/messages`,
+
       { receiverId: connection._id, text: newMessage, timestamp, status: 'sent' },
       { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
     );
@@ -195,7 +203,9 @@ useEffect(() => {
               </Link>
               <div className="flex items-center space-x-4">
                 <img
+
                   src={connection.photo ? `${backendUrl}${connection.photo}` : imag}
+
                   alt={connection.name}
                   className="w-12 h-12 rounded-full object-cover"
                 />

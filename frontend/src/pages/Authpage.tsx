@@ -29,7 +29,9 @@ const AuthPage: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+
       const res = await axios.post(`${backendUrl}/api/auth/login`, loginData);
+
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('userId', res.data.user._id);
 
@@ -37,7 +39,9 @@ const AuthPage: React.FC = () => {
         id: res.data.user._id,
         name: res.data.user.name,
         email: res.data.user.email,
+
         avatar: res.data.user.photo ? `${backendUrl}${res.data.user.photo}` : '',
+
         skills: res.data.user.skills || [],
         wantToLearn: res.data.user.wantToLearn || [],
         rating: 4.8,
@@ -83,7 +87,9 @@ const AuthPage: React.FC = () => {
     );
 
     try {
+
       await axios.post(`${backendUrl}/api/auth/register`, formData, {
+
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       toast.success('Signup successful! Please login.');

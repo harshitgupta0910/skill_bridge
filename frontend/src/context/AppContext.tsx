@@ -34,7 +34,9 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const token = localStorage.getItem("token");
     if (token && !user) {
       axios
+
         .get(`${backendUrl}/api/user/profile`, {
+
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {
@@ -44,7 +46,9 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
             name: userData.name,
             email: userData.email,
             avatar: userData.photo
+
               ? `${backendUrl}${userData.photo}`
+
               : "",
             skills: userData.skills || [],
             wantToLearn: userData.wantToLearn || [],

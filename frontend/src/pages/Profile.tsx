@@ -44,7 +44,9 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const handleSave = async () => {
     try {
       const token = localStorage.getItem('token');
+
       const res = await axios.put(`${backendUrl}/api/user/profile`, editForm, {
+
         headers: { Authorization: `Bearer ${token}` },
       });
       setUser(res.data);
@@ -60,7 +62,9 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
     fd.append('avatar', file);
     try {
       const token = localStorage.getItem('token');
+
       const res = await axios.post(`${backendUrl}/api/user/avatar`, fd, {
+
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
@@ -96,7 +100,9 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
           <div className="bg-white p-6 rounded-xl shadow-sm text-center">
             <div className="relative inline-block">
               <img
+
                 src={user.photo ? `${backendUrl}${user.photo}` : imag}
+
                 alt="avatar"
                 className="w-32 h-32 rounded-full object-cover mx-auto"
               />

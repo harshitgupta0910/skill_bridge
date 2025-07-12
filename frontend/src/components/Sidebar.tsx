@@ -16,8 +16,13 @@ import {
 import { useApp } from '../context/AppContext';
 import SK from '../sk.png';
 import io from 'socket.io-client';
+
 const bUrl = import.meta.env.VITE_BACKEND_URL;
 const socket = io(bUrl); // Your backend Socket.IO server
+
+
+
+
 
 const Sidebar = () => {
   const location = useLocation();

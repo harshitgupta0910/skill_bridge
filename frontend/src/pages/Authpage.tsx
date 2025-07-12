@@ -7,6 +7,7 @@ import { useApp } from '../context/AppContext';
 import { motion } from 'framer-motion';
 
 const AuthPage: React.FC = () => {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [isLogin, setIsLogin] = useState(true);
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [signupData, setSignupData] = useState({
@@ -28,7 +29,7 @@ const AuthPage: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axios.post('https://skill-bridge-7de9.onrender.com/api/auth/login', loginData);
+      const res = await axios.post(`${backendUrl}/api/auth/login`, loginData);
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('userId', res.data.user._id);
 
@@ -36,7 +37,7 @@ const AuthPage: React.FC = () => {
         id: res.data.user._id,
         name: res.data.user.name,
         email: res.data.user.email,
-        avatar: res.data.user.photo ? `https://skill-bridge-7de9.onrender.com${res.data.user.photo}` : '',
+        avatar: res.data.user.photo ? `${backendUrl}${res.data.user.photo}` : '',
         skills: res.data.user.skills || [],
         wantToLearn: res.data.user.wantToLearn || [],
         rating: 4.8,
@@ -82,7 +83,7 @@ const AuthPage: React.FC = () => {
     );
 
     try {
-      await axios.post('https://skill-bridge-7de9.onrender.com/api/auth/register', formData, {
+      await axios.post(`${backendUrl}/api/auth/register`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       toast.success('Signup successful! Please login.');

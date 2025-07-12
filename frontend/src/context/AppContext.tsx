@@ -29,12 +29,12 @@ const AppContext = createContext<AppContextType>({
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token && !user) {
       axios
-        .get("https://skill-bridge-7de9.onrender.com/api/user/profile", {
+        .get(`${backendUrl}/api/user/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {
@@ -44,7 +44,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
             name: userData.name,
             email: userData.email,
             avatar: userData.photo
-              ? `https://skill-bridge-7de9.onrender.com${userData.photo}`
+              ? `${backendUrl}${userData.photo}`
               : "",
             skills: userData.skills || [],
             wantToLearn: userData.wantToLearn || [],

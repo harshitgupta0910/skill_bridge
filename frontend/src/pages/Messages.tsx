@@ -6,10 +6,10 @@ import { Link } from 'react-router-dom';
 const Messages = () => {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
   useEffect(() => {
     axios
-      .get('https://skill-bridge-7de9.onrender.com/api/community/members')
+      .get(`${backendUrl}/api/community/members`)
       .then((res) => setUsers(res.data))
       .catch((err) => console.error(err));
   }, []);
@@ -50,7 +50,7 @@ const Messages = () => {
                   <img
                     src={
                       member.photo
-                        ? `https://skill-bridge-7de9.onrender.com${member.photo}`
+                        ? `${backendUrl}${member.photo}`
                         : '/default-avatar.png'
                     }
                     alt={member.name}
@@ -66,7 +66,7 @@ const Messages = () => {
                   </div>
                 </div>
 
-                {/* ✅ Directly opens Messages Tab */}
+                {/* Directly opens Messages Tab */}
                 <Link
                   to={`/connection/${member._id}?tab=messages`}
                   className="px-6 py-2 rounded-full bg-gray-800 text-white text-sm font-medium shadow-md hover:bg-gray-900 transition-colors"

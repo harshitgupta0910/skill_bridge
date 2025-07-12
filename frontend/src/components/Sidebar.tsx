@@ -1,5 +1,4 @@
 // src/components/Sidebar.jsx
-
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -17,8 +16,8 @@ import {
 import { useApp } from '../context/AppContext';
 import SK from '../sk.png';
 import io from 'socket.io-client';
-
-const socket = io('https://skill-bridge-7de9.onrender.com'); // Your backend Socket.IO server
+const bUrl = import.meta.env.VITE_BACKEND_URL;
+const socket = io(bUrl); // Your backend Socket.IO server
 
 const Sidebar = () => {
   const location = useLocation();

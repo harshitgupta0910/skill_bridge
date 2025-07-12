@@ -14,7 +14,8 @@ const app = express();
 const server = http.createServer(app);
 
 //  Use your frontend URL here:
-const FRONTEND_URL = "https://skill-bridge-frontend.onrender.com";
+const FRONTEND_URL = "http://localhost:5173";
+// "https://skill-bridge-frontend.onrender.com";
 
 const io = new Server(server, {
   cors: {

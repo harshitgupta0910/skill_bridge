@@ -19,9 +19,11 @@ const Community = () => {
   const [activeTab, setActiveTab] = useState('discover');
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
   useEffect(() => {
-    axios.get('http://localhost:5000/api/community/members')
+
+    axios.get(`${backendUrl}/api/community/members`)
+
       .then((res) => setUsers(res.data))
       .catch((err) => console.error(err));
   }, []);
@@ -140,7 +142,9 @@ const Community = () => {
                         <div key={member._id} className="border border-gray-200 rounded-2xl p-6 hover:shadow-md transition-all duration-200">
                           <div className="flex items-center space-x-4 mb-4">
                             <img
-                              src={member.photo ? `http://localhost:5000${member.photo}` : imag}
+
+                              src={member.photo ? `${backendUrl}${member.photo}` : imag}
+
                               alt={member.name}
                               className="w-12 h-12 rounded-full object-cover"
                             />

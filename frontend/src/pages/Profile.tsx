@@ -1,4 +1,4 @@
-// ✅ Your full working Profile.tsx with editable languages
+//  Your full working Profile.tsx with editable languages
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
@@ -40,11 +40,13 @@ const Profile: React.FC = () => {
   }, [user]);
 
   if (!user || !editForm) return <div className="p-10">Loading...</div>;
-
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const handleSave = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.put('http://localhost:5000/api/user/profile', editForm, {
+
+      const res = await axios.put(`${backendUrl}/api/user/profile`, editForm, {
+
         headers: { Authorization: `Bearer ${token}` },
       });
       setUser(res.data);
@@ -60,7 +62,9 @@ const Profile: React.FC = () => {
     fd.append('avatar', file);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.post('http://localhost:5000/api/user/avatar', fd, {
+
+      const res = await axios.post(`${backendUrl}/api/user/avatar`, fd, {
+
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
@@ -96,7 +100,9 @@ const Profile: React.FC = () => {
           <div className="bg-white p-6 rounded-xl shadow-sm text-center">
             <div className="relative inline-block">
               <img
-                src={user.photo ? `http://localhost:5000${user.photo}` : imag}
+
+                src={user.photo ? `${backendUrl}${user.photo}` : imag}
+
                 alt="avatar"
                 className="w-32 h-32 rounded-full object-cover mx-auto"
               />
